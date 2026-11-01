@@ -1,0 +1,57 @@
+# RT-Spark (STM32F407ZG) 4-Track 8-Bit Audio Player
+
+A multi-track digital audio engine and visualizer implemented on the **RT-Spark (STM32F407ZG)** development board using PlatformIO and the Arduino framework.
+
+This project features non-blocking square-wave audio synthesis, dynamic ADC volume scaling with serial telemetry, an automated 3-LED chase sequence during playback, and single-button track switching logic.
+
+---
+
+## 📌 Features
+
+- **4-Track Retro Playlist:** Includes *Pitch Scale*, *Imperial March*, *Super Mario Bros Theme*, and *The Legend of Zelda Theme*.
+- **Non-Blocking Tone Generation:** Uses `micros()` timing to drive pin `PB0` smoothly without freezing CPU execution or causing audio static.
+- **Single-Button Control Gating (PA0):**
+  - **Short Tap (< 800 ms):** Toggle Play / Pause state.
+  - **Long Press (> 800 ms):** Cycle through playlist tracks (1 → 2 → 3 → 4 → 1) with an all-LED strobe acknowledgment.
+- **Dynamic Volume Telemetry (PA3):** Auto-calibrated ratio scaling converts raw ADC pot values to clean 0%–100% telemetry logs via `Serial1`.
+- **Visual Feedback Machine:**
+  - **Paused:** Solid Red LED (`PA8`).
+  - **Playback:** Rotating chase sequence (Red `PA8` → Green `PA1` → Yellow `PB14`).
+  - **Track Switch:** 3-LED synchronous flash strobe.
+- **Decoupled Screen Architecture:** Modular metadata wrapper in `playlist.h` ready for plug-and-play LCD/OLED display integration (`updateScreen()` hook).
+
+---
+
+## 🛠️ Hardware Pin Configuration
+
+| Component | MCU Pin | Logic / Description |
+| :--- | :--- | :--- |
+| **Control Button** | `PA0` | Active-LOW with internal pull-up (`INPUT_PULLUP`) |
+| **Volume Potentiometer** | `PA3` | Analog Input (`ADC`) |
+| **Speaker Output** | `PB0` | Square-wave PWM output |
+| **Red LED** | `PA8` | Indicator 1 (Pause / Chase Step 1) |
+| **Green LED** | `PA1` | Indicator 2 (Chase Step 2) |
+| **Yellow LED** | `PB14` | Indicator 3 (Chase Step 3) |
+
+---
+
+## 📂 Project Architecture
+├── include/
+│   └── playlist.h      # Track structs, retro note frequency arrays, & screen hooks
+├── src/
+│   └── main.cpp        # State machine logic, non-blocking tone engine, and GPIO timing
+├── platformio.ini      # Board environment build parameters (black_f407zg)
+└── README.md           # Documentation
+
+---
+
+## 🚀 Building & Flashing
+
+### Prerequisites
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [PlatformIO Extension](https://platformio.org/)
+
+### Commands
+1. Clone this repository:
+   ```bash
+   git clone [https://github.com/KJFraser03/RT-Spark-MP3-Player.git](https://github.com/KJFraser03/RT-Spark-MP3-Player.git)
